@@ -1,8 +1,9 @@
 .details-wrapper {
     display: flex;
     align-items: center;
-    width: 350px;
-    border: #f1f1f1 1px solid;
+    width: 320px;
+    border: gray 1px solid;
+    border-radius: 5px;
 }
 
 .detail {
@@ -11,5 +12,6 @@
 }
 
 .weight-text {
-
+    padding-top: 0.5rem;
+    font-size: smaller;
 }

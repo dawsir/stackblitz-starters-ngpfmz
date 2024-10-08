@@ -1,8 +1,13 @@
-/* Add application styles & imports to this file! */
+:root {
+  --dropdown-background-color: #f1f1f1;
+  --light-gray: #c1c1c1;
+}
+
 .wrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 2rem;
 }
 
 body {
@@ -12,6 +17,7 @@ body {
 h1, h2, h3, h4, h5, h6 {
   font-weight: normal !important;
 }
+.no-margin-bottom { margin-bottom: 0 !important; }
 
 .material-symbols-outlined {
   font-variation-settings: 'FILL' 0,
@@ -20,11 +26,6 @@ h1, h2, h3, h4, h5, h6 {
   'opsz' 16
 }
 
-
-:root {
-  --dropdown-background-color: #f1f1f1;
-  --light-gray: #c1c1c1;
-}
 
 .barlow-thin {
   font-family: "Barlow", sans-serif;

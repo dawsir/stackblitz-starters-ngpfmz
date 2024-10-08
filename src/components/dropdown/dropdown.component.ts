@@ -35,7 +35,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
                     class="dropdown-input"
                 />
                 @if (searchTerm) {
-                    <button class="clear-button" (click)="clearInput($event)">
+                    <button class="clear-button" (click)="clearInput()">
                         <span class="material-symbols-outlined">close</span>
                     </button>
                 }
@@ -43,8 +43,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
                     <span class="material-symbols-outlined icon-blue">search</span>
                 } @else {
                     <span class="material-symbols-outlined">stat_minus_1</span>
-                }
-
+                } 
             </div>
             @if (showDropdown()) {
                 <ul class="dropdown-list" (mousedown)="onDropdownClick($event)" (scroll)="onScroll($event)">
@@ -55,7 +54,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
                     }
                 </ul>
             }
-
         </div>
     `,
     styleUrl: './dropdown.component.css',
@@ -106,9 +104,10 @@ export class DropdownComponent<T> { //TODO otypowac, zmienic fonta inputa
     }
 
     // Clear the input and hide dropdown
-    clearInput(event: Event) {
+    clearInput() {
         this.searchTerm = '';
-        this.filteredItems.set(this.items()) ;
+        this.filteredItems.set(this.items());
+        this.selectedItem.emit(null);
     }
 
     onScroll(event: any) {

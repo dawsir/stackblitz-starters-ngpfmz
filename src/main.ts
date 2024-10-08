@@ -18,11 +18,11 @@ import { PokemonService } from './services/pokemon.service';
     ],
     template: `
         <div class="wrapper">
-            <h2>PokeSelect</h2>
+            <h2 class="no-margin-bottom">PokeSelect</h2>
             <app-dropdown [items]="dropdownItems" (selectedItem)="selectedItem($event)"
                           (scrollEnd)="fetchMoreData()"></app-dropdown>
             @if (pokemon()) {
-                <app-pokemon-details [pokemon]="pokemon"></app-pokemon-details>
+                <app-pokemon-details class="" [pokemon]="pokemon"></app-pokemon-details>
             }
         </div>
     `,
@@ -46,10 +46,17 @@ export class App implements OnInit {
     }
 
     selectedItem(item: PokemonBasic) {
-        this.service.getPokemon(item.url).pipe(map(({ name, sprites, weight }) => ({ name: item.name, sprites, weight }))).subscribe(pokemon => {
-            console.log('pokemon', pokemon);
-            this.pokemon.set(pokemon)
-        })
+        if (item) {
+            this.service.getPokemon(item.url).pipe(map(({ name, sprites, weight }) => ({
+                name: item.name,
+                sprites,
+                weight,
+            }))).subscribe(pokemon => {
+                this.pokemon.set(pokemon);
+            });
+        } else {
+            this.pokemon.set(null);
+        }
     }
 
     fetchMoreData() {

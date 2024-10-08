@@ -20,5 +20,4 @@ import { PokemonDetails } from '../../model/models';
 })
 export class PokemonDetailsComponent {
   @Input() pokemon!: WritableSignal<PokemonDetails>;
-
 }

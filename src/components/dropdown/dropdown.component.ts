@@ -61,31 +61,33 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DropdownComponent<T> { //TODO otypowac, zmienic fonta inputa
-    key: InputSignal<string> = input<string>('name');
+    protected key: InputSignal<string> = input<string>('name');
+    protected filteredItems: WritableSignal<any[]> = signal<any[]>([]);
+    protected showDropdown: WritableSignal<boolean> = signal<boolean>(false);
+
     @Input() items!: WritableSignal<any[]>;
     @Output() selectedItem = new EventEmitter<any>();
     @Output() scrollEnd = new EventEmitter<boolean>();
 
-    searchTerm: string = '';
-    filteredItems: WritableSignal<any[]> = signal<any[]>([]);
-    showDropdown: WritableSignal<boolean> = signal<boolean>(false);
+    protected searchTerm: string = '';
+
 
     constructor() {
         effect(() => {
             if (this.items().length) {
-                this.filteredItems.set(this.items()?.filter(item => (item[this.key()]).toLowerCase().includes(this.searchTerm.toLowerCase()))) ;
+                this.filteredItems.set(this.items()?.filter(item => (item[this.key()]).toLowerCase().includes(this.searchTerm.toLowerCase())));
             }
         }, { allowSignalWrites: true });
     }
 
-    onSearch(event: Event) {
+    protected onSearch(event: Event) {
         const inputValue = (event.target as HTMLInputElement).value;
         this.searchTerm = inputValue;
         this.filteredItems.set(this.items().filter(item =>
             (item[this.key()]).toLowerCase().includes(this.searchTerm.toLowerCase())));
     }
 
-    selectItem(item: any) {
+    protected selectItem(item: any) {
         if (item) {
             this.selectedItem.emit(item);
             this.searchTerm = item[this.key()];
@@ -95,23 +97,23 @@ export class DropdownComponent<T> { //TODO otypowac, zmienic fonta inputa
 
     }
 
-    hideDropdown() {
+    protected hideDropdown() {
         this.showDropdown.set(false);
     }
 
-    onDropdownClick(event: Event) {
+    protected onDropdownClick(event: Event) {
         event.preventDefault();
         event.stopPropagation();
     }
 
     // Clear the input and hide dropdown
-    clearInput() {
+    protected clearInput() {
         this.searchTerm = '';
         this.filteredItems.set(this.items());
         this.selectedItem.emit(null);
     }
 
-    onScroll(event: any) {
+    protected onScroll(event: any) {
         if (event.target.offsetHeight + event.target.scrollTop >= event.target.scrollHeight) {
             this.scrollEnd.emit();
         }

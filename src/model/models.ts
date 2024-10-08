@@ -10,7 +10,7 @@ export interface PokemonBasic {
     url: string;
 }
 
-export interface PokemonDetails {
+export interface PokemonTeaser {
     name: string;
     sprite: string;
     weight: number;

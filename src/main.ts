@@ -4,7 +4,7 @@ import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@ang
 import { bootstrapApplication } from '@angular/platform-browser';
 import { map } from 'rxjs';
 import { DropdownComponent } from './components/dropdown/dropdown.component';
-import { PokemonDetailsComponent } from './components/pokemon-details/pokemon-details.component';
+import { PokemonTeaserComponent } from './components/pokemon-teaser/pokemon-teaser.component';
 import { PokemonBasic, PokemonDataResponse } from './model/models';
 import { PokemonService } from './services/pokemon.service';
 
@@ -13,8 +13,8 @@ import { PokemonService } from './services/pokemon.service';
     standalone: true,
     imports: [
         DropdownComponent,
-        PokemonDetailsComponent,
         AsyncPipe,
+        PokemonTeaserComponent,
     ],
     template: `
         <div class="wrapper">
@@ -22,7 +22,7 @@ import { PokemonService } from './services/pokemon.service';
             <app-dropdown [items]="dropdownItems" (selectedItem)="selectedItem($event)"
                           (scrollEnd)="fetchMoreData()"></app-dropdown>
             @if (pokemon()) {
-                <app-pokemon-details class="" [pokemon]="pokemon"></app-pokemon-details>
+                <app-pokemon-teaser class="" [pokemon]="pokemon"></app-pokemon-teaser>
             }
         </div>
     `,
@@ -60,13 +60,15 @@ export class App implements OnInit {
     }
 
     fetchMoreData() {
-        this.service.getPokemons(this.nextUrl()).subscribe((value: PokemonDataResponse) => {
-            this.nextUrl.set(value.next);
-            this.dropdownItems.set([...this.dropdownItems(), ...value.results.map(value => ({
-                ...value,
-                name: value.name.charAt(0).toUpperCase() + value.name.slice(1),
-            }))]);
-        });
+        if (this.nextUrl() !== null) {
+            this.service.getPokemons(this.nextUrl()).subscribe((value: PokemonDataResponse) => {
+                this.nextUrl.set(value.next);
+                this.dropdownItems.set([...this.dropdownItems(), ...value.results.map(value => ({
+                    ...value,
+                    name: value.name.charAt(0).toUpperCase() + value.name.slice(1),
+                }))]);
+            });
+        }
     }
 
 }

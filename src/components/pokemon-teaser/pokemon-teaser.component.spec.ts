@@ -1,26 +1,24 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { PokemonDetailsComponent } from './pokemon-details.component';
+import { PokemonTeaserComponent } from './pokemon-teaser.component';
 import { signal } from '@angular/core';
-import { PokemonDetails } from '../../model/models';
+import { PokemonTeaser } from '../../model/models';
 
 describe('PokemonDetailsComponent', () => {
-    let component: PokemonDetailsComponent;
-    let fixture: ComponentFixture<PokemonDetailsComponent>;
+    let component: PokemonTeaserComponent;
+    let fixture: ComponentFixture<PokemonTeaserComponent>;
 
-    const mockPokemon: PokemonDetails = {
+    const mockPokemon: PokemonTeaser = {
         name: 'Pikachu',
         weight: 60,
-        sprites: {
-            back_default: 'https://example.com/pikachu.png',
-        },
+        sprite: 'https://example.com/pikachu.png',
     };
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [PokemonDetailsComponent],
+            declarations: [PokemonTeaserComponent],
         }).compileComponents();
 
-        fixture = TestBed.createComponent(PokemonDetailsComponent);
+        fixture = TestBed.createComponent(PokemonTeaserComponent);
         component = fixture.componentInstance;
         component.pokemon = signal(mockPokemon); // Initialize with mock data
         fixture.detectChanges(); // Trigger change detection
@@ -35,13 +33,13 @@ describe('PokemonDetailsComponent', () => {
         const nameElement = fixture.nativeElement.querySelector('span');
         const weightElement = fixture.nativeElement.querySelector('.weight-text');
 
-        expect(imgElement.src).toContain(mockPokemon.sprites.back_default);
+        expect(imgElement.src).toContain(mockPokemon.sprite);
         expect(nameElement.textContent).toContain(mockPokemon.name);
         expect(weightElement.textContent).toContain(`Weight: ${mockPokemon.weight}`);
     });
 
     it('should not display details if pokemon is not provided', () => {
-        component.pokemon = signal({} as PokemonDetails); // Set pokemon to null
+        component.pokemon = signal({} as PokemonTeaser); // Set pokemon to null
         fixture.detectChanges(); // Trigger change detection
 
         const detailsWrapper = fixture.nativeElement.querySelector('.details-wrapper');

@@ -1,8 +1,8 @@
 import { Component, Input, WritableSignal } from '@angular/core';
-import { PokemonDetails } from '../../model/models';
+import { PokemonTeaser } from '../../model/models';
 
 @Component({
-  selector: 'app-pokemon-details',
+  selector: 'app-pokemon-teaser',
   standalone: true,
   imports: [],
   template: `
@@ -16,8 +16,8 @@ import { PokemonDetails } from '../../model/models';
           </div>
       }
   `,
-  styleUrl: './pokemon-details.component.css'
+  styleUrl: './pokemon-teaser.component.css'
 })
-export class PokemonDetailsComponent {
-  @Input() pokemon!: WritableSignal<PokemonDetails>;
+export class PokemonTeaserComponent {
+  @Input() pokemon!: WritableSignal<PokemonTeaser>;
 }

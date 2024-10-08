@@ -2,12 +2,12 @@ import { AsyncPipe, NgClass } from '@angular/common';
 import {
     ChangeDetectionStrategy,
     Component,
-    effect,
+    effect, ElementRef,
     EventEmitter,
     input,
     Input,
     InputSignal,
-    Output, signal,
+    Output, signal, ViewChild,
     WritableSignal,
 } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -23,26 +23,31 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     ],
     template: `
         <div class="dropdown-wrapper">
-            <label class="label" for="select">Favourite character</label>
-            <div class="input-wrapper">
+            <label for="select">Favourite character</label>
+            <div class="input-wrapper" (click)="focus()">
                 <input
+                    #input
                     type="text"
                     [(ngModel)]="searchTerm"
                     (click)="showDropdown.set(true)"
                     (blur)="hideDropdown()"
                     (input)="onSearch($event)"
                     placeholder="Choose your favourite..."
-                    class="input"
                 />
                 @if (searchTerm) {
-                    <button class="clear-button" (click)="clearInput()">
+                    <button class="clear-button" (click)="clearInput($event)">
                         <span class="material-symbols-outlined">close</span>
                     </button>
                 }
                 @if (showDropdown()) {
-                    <span class="material-symbols-outlined icon-blue">search</span>
+                    @if (searchTerm) {
+                        <span class="material-symbols-outlined icon-blue">search</span>
+                    } @else {
+                        <span class="material-symbols-outlined">keyboard_arrow_up</span>
+
+                    }
                 } @else {
-                    <span class="material-symbols-outlined">stat_minus_1</span>
+                    <span class="material-symbols-outlined">keyboard_arrow_down</span>
                 }
             </div>
             @if (showDropdown()) {
@@ -61,6 +66,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DropdownComponent {
+    @ViewChild('input') input!: ElementRef;
     protected id: InputSignal<string> = input<string>('name');
     protected key: InputSignal<string> = input<string>('name');
     filteredItems: WritableSignal<any[]> = signal<any[]>([]);
@@ -108,16 +114,24 @@ export class DropdownComponent {
     }
 
     // Clear the input and hide dropdown
-    clearInput() {
+    clearInput(event: Event) {
+        event.preventDefault();
+        event.stopPropagation();
         this.searchTerm = '';
         this.filteredItems.set(this.items());
         this.selectedItem.emit(null);
+        this.focus();
     }
 
     onScroll(event: any) {
         if (event.target.offsetHeight + event.target.scrollTop >= event.target.scrollHeight) {
             this.scrollEnd.emit();
         }
+    }
+
+    focus() {
+        this.showDropdown.set(true);
+        this.input.nativeElement.focus();
     }
 
 }

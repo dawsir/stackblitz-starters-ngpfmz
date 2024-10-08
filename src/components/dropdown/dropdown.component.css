@@ -1,4 +1,3 @@
-
 .dropdown-wrapper {
     position: relative;
     display: inline-block;
@@ -12,7 +11,7 @@
     border-bottom: blue solid 2px;
 }
 
-.label {
+label {
     font-size: x-small;
 }
 
@@ -22,7 +21,7 @@
     align-items: center;
 }
 
-.input {
+input {
     font-family: "Barlow", sans-serif;
     width: 300px;
     padding: 0;
@@ -33,12 +32,12 @@
     background-color: var(--dropdown-background-color);
 }
 
-.input::placeholder {
+input::placeholder {
     color: darkgray;
     font-weight: normal;
 }
 
-.input:focus-visible::placeholder {
+input:focus-visible::placeholder {
     color: transparent;
 }
 

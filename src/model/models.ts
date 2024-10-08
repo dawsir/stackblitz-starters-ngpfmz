@@ -12,7 +12,7 @@ export interface PokemonBasic {
 
 export interface PokemonDetails {
     name: string;
-    sprites: Sprites
+    sprite: string;
     weight: number
 }
 

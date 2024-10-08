@@ -8,7 +8,7 @@ import { PokemonDetails } from '../../model/models';
   template: `
       @if (pokemon()) {
           <div class="details-wrapper">
-              <img [src]="pokemon().sprites.back_default" [alt]="pokemon().name">
+              <img [src]="pokemon().sprite" [alt]="pokemon().name">
             <div class="detail">
               <span>{{pokemon().name}}</span>
               <span class="weight-text">Weight: {{pokemon().weight}}</span>

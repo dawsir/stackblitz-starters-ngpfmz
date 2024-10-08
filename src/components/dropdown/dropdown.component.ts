@@ -47,9 +47,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
             </div>
             @if (showDropdown()) {
                 <ul class="dropdown-list" (mousedown)="onDropdownClick($event)" (scroll)="onScroll($event)">
-                    @for (item of filteredItems(); track item[key()]) {
+                    @for (item of filteredItems(); track item[id()]) {
                         <li class="dropdown-item" (click)="selectItem(item)"
-                            [ngClass]="{selected: item[key()] === searchTerm}">
+                            [ngClass]="{selected: item[id()] === searchTerm}">
                             {{ item[key()] }}
                         </li>
                     }
@@ -60,34 +60,35 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     styleUrl: './dropdown.component.css',
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DropdownComponent<T> { //TODO otypowac, zmienic fonta inputa
+export class DropdownComponent {
+    protected id: InputSignal<string> = input<string>('name');
     protected key: InputSignal<string> = input<string>('name');
-    protected filteredItems: WritableSignal<any[]> = signal<any[]>([]);
-    protected showDropdown: WritableSignal<boolean> = signal<boolean>(false);
+    filteredItems: WritableSignal<any[]> = signal<any[]>([]);
+    showDropdown: WritableSignal<boolean> = signal<boolean>(false);
 
     @Input() items!: WritableSignal<any[]>;
     @Output() selectedItem = new EventEmitter<any>();
     @Output() scrollEnd = new EventEmitter<boolean>();
 
-    protected searchTerm: string = '';
+    searchTerm: string = '';
 
 
     constructor() {
         effect(() => {
             if (this.items().length) {
-                this.filteredItems.set(this.items()?.filter(item => (item[this.key()]).toLowerCase().includes(this.searchTerm.toLowerCase())));
+                this.filteredItems.set(this.items()?.filter(item => (item[this.id()]).toLowerCase().includes(this.searchTerm.toLowerCase())));
             }
         }, { allowSignalWrites: true });
     }
 
-    protected onSearch(event: Event) {
+    onSearch(event: Event) {
         const inputValue = (event.target as HTMLInputElement).value;
         this.searchTerm = inputValue;
         this.filteredItems.set(this.items().filter(item =>
-            (item[this.key()]).toLowerCase().includes(this.searchTerm.toLowerCase())));
+            (item[this.id()]).toLowerCase().includes(this.searchTerm.toLowerCase())));
     }
 
-    protected selectItem(item: any) {
+    selectItem(item: any) {
         if (item) {
             this.selectedItem.emit(item);
             this.searchTerm = item[this.key()];
@@ -107,13 +108,13 @@ export class DropdownComponent<T> { //TODO otypowac, zmienic fonta inputa
     }
 
     // Clear the input and hide dropdown
-    protected clearInput() {
+    clearInput() {
         this.searchTerm = '';
         this.filteredItems.set(this.items());
         this.selectedItem.emit(null);
     }
 
-    protected onScroll(event: any) {
+    onScroll(event: any) {
         if (event.target.offsetHeight + event.target.scrollTop >= event.target.scrollHeight) {
             this.scrollEnd.emit();
         }

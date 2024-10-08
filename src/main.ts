@@ -47,9 +47,9 @@ export class App implements OnInit {
 
     selectedItem(item: PokemonBasic) {
         if (item) {
-            this.service.getPokemon(item.url).pipe(map(({ name, sprites, weight }) => ({
+            this.service.getPokemon(item.url).pipe(map(({ sprites, weight }) => ({
                 name: item.name,
-                sprites,
+                sprite: sprites.front_default ?? sprites.front_female,
                 weight,
             }))).subscribe(pokemon => {
                 this.pokemon.set(pokemon);

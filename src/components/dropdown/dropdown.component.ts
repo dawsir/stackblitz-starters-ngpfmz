@@ -43,11 +43,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
                     @if (searchTerm) {
                         <span class="material-symbols-outlined icon-blue">search</span>
                     } @else {
-                        <span class="material-symbols-outlined">keyboard_arrow_up</span>
-
+                        <span class="material-symbols-outlined rotated-element">stat_minus_1</span>
                     }
                 } @else {
-                    <span class="material-symbols-outlined">keyboard_arrow_down</span>
+                    <span class="material-symbols-outlined">stat_minus_1</span>
                 }
             </div>
             @if (showDropdown()) {
@@ -67,17 +66,18 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 })
 export class DropdownComponent {
     @ViewChild('input') input!: ElementRef;
-    protected id: InputSignal<string> = input<string>('name');
-    protected key: InputSignal<string> = input<string>('name');
-    filteredItems: WritableSignal<any[]> = signal<any[]>([]);
-    showDropdown: WritableSignal<boolean> = signal<boolean>(false);
-
     @Input() items!: WritableSignal<any[]>;
+
     @Output() selectedItem = new EventEmitter<any>();
     @Output() scrollEnd = new EventEmitter<boolean>();
 
-    searchTerm: string = '';
+    protected id: InputSignal<string> = input<string>('name');
+    protected key: InputSignal<string> = input<string>('name');
 
+    filteredItems: WritableSignal<any[]> = signal<any[]>([]);
+    showDropdown: WritableSignal<boolean> = signal<boolean>(false);
+
+    protected searchTerm: string = '';
 
     constructor() {
         effect(() => {
@@ -87,14 +87,14 @@ export class DropdownComponent {
         }, { allowSignalWrites: true });
     }
 
-    onSearch(event: Event) {
+    protected onSearch(event: Event) {
         const inputValue = (event.target as HTMLInputElement).value;
         this.searchTerm = inputValue;
         this.filteredItems.set(this.items().filter(item =>
             (item[this.id()]).toLowerCase().includes(this.searchTerm.toLowerCase())));
     }
 
-    selectItem(item: any) {
+    protected selectItem(item: any) {
         if (item) {
             this.selectedItem.emit(item);
             this.searchTerm = item[this.key()];
@@ -114,7 +114,7 @@ export class DropdownComponent {
     }
 
     // Clear the input and hide dropdown
-    clearInput(event: Event) {
+    protected clearInput(event: Event) {
         event.preventDefault();
         event.stopPropagation();
         this.searchTerm = '';
@@ -123,16 +123,14 @@ export class DropdownComponent {
         this.focus();
     }
 
-    onScroll(event: any) {
+    protected onScroll(event: any) {
         if (event.target.offsetHeight + event.target.scrollTop >= event.target.scrollHeight) {
             this.scrollEnd.emit();
         }
     }
 
-    focus() {
+    protected focus() {
         this.showDropdown.set(true);
         this.input.nativeElement.focus();
     }
-
 }
-

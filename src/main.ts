@@ -29,10 +29,11 @@ import { PokemonService } from './services/pokemon.service';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class App implements OnInit {
-    service: PokemonService = inject(PokemonService);
-    dropdownItems = signal<PokemonBasic[]>([]);
-    nextUrl = signal<string>('');
-    pokemon = signal<any>(null);
+    protected pokemon = signal<any>(null);
+    protected dropdownItems = signal<PokemonBasic[]>([]);
+
+    private nextUrl = signal<string>('');
+    private service: PokemonService = inject(PokemonService);
 
 
     ngOnInit(): void {
@@ -45,7 +46,7 @@ export class App implements OnInit {
         });
     }
 
-    selectedItem(item: PokemonBasic) {
+    protected selectedItem(item: PokemonBasic) {
         if (item) {
             this.service.getPokemon(item.url).pipe(map(({ sprites, weight }) => ({
                 name: item.name,
@@ -59,7 +60,7 @@ export class App implements OnInit {
         }
     }
 
-    fetchMoreData() {
+    protected fetchMoreData() {
         if (this.nextUrl() !== null) {
             this.service.getPokemons(this.nextUrl()).subscribe((value: PokemonDataResponse) => {
                 this.nextUrl.set(value.next);
@@ -70,7 +71,6 @@ export class App implements OnInit {
             });
         }
     }
-
 }
 
 bootstrapApplication(App, {

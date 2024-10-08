@@ -81,3 +81,7 @@ input:focus-visible::placeholder {
 .selected:hover {
     background-color: lightblue;
 }
+
+.rotated-element {
+    rotate: 180deg;
+}

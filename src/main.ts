@@ -2,9 +2,11 @@ import { AsyncPipe } from '@angular/common';
 import { provideHttpClient } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { bootstrapApplication } from '@angular/platform-browser';
+import { map } from 'rxjs';
 import { DropdownComponent } from './components/dropdown/dropdown.component';
 import { PokemonDetailsComponent } from './components/pokemon-details/pokemon-details.component';
-import { PokemonBasic, PokemonResponse, PokemonService } from './services/pokemon.service';
+import { PokemonBasic, PokemonDataResponse } from './model/models';
+import { PokemonService } from './services/pokemon.service';
 
 @Component({
     selector: 'app-root',
@@ -16,10 +18,11 @@ import { PokemonBasic, PokemonResponse, PokemonService } from './services/pokemo
     ],
     template: `
         <div class="wrapper">
-            <h1>PokeSelect</h1>
-            <app-dropdown [items]="dropdownItems" (selectedItem)="selectedItem($event)" (scrollEnd)="fetchMoreData()"></app-dropdown>
-            @if (false) {
-                <app-pokemon-details></app-pokemon-details>
+            <h2>PokeSelect</h2>
+            <app-dropdown [items]="dropdownItems" (selectedItem)="selectedItem($event)"
+                          (scrollEnd)="fetchMoreData()"></app-dropdown>
+            @if (pokemon()) {
+                <app-pokemon-details [pokemon]="pokemon"></app-pokemon-details>
             }
         </div>
     `,
@@ -29,12 +32,12 @@ export class App implements OnInit {
     service: PokemonService = inject(PokemonService);
     dropdownItems = signal<PokemonBasic[]>([]);
     nextUrl = signal<string>('');
+    pokemon = signal<any>(null);
 
 
     ngOnInit(): void {
-        this.service.getPokemons().subscribe((value: PokemonResponse) => {
-            console.log(value);
-            // this.nextUrl.set(value.next)
+        this.service.getPokemons().subscribe((value: PokemonDataResponse) => {
+            this.nextUrl.set(value.next);
             this.dropdownItems.set(value.results.map(value => ({
                 name: value.name.charAt(0).toUpperCase() + value.name.slice(1),
                 url: value.url,
@@ -43,17 +46,19 @@ export class App implements OnInit {
     }
 
     selectedItem(item: PokemonBasic) {
-        console.log(item);
+        this.service.getPokemon(item.url).pipe(map(({ name, sprites, weight }) => ({ name: item.name, sprites, weight }))).subscribe(pokemon => {
+            console.log('pokemon', pokemon);
+            this.pokemon.set(pokemon)
+        })
     }
 
     fetchMoreData() {
-        console.log('end');
-        this.service.getPokemons().subscribe((value: PokemonResponse) => {
-            console.log(value);
-            this.dropdownItems.set(value.results.map(value => ({
+        this.service.getPokemons(this.nextUrl()).subscribe((value: PokemonDataResponse) => {
+            this.nextUrl.set(value.next);
+            this.dropdownItems.set([...this.dropdownItems(), ...value.results.map(value => ({
+                ...value,
                 name: value.name.charAt(0).toUpperCase() + value.name.slice(1),
-                url: value.url,
-            })));
+            }))]);
         });
     }
 

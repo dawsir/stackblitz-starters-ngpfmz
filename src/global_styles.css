@@ -6,7 +6,11 @@
 }
 
 body {
-  font-family: "Barlow", sans-serif;
+  font-family: "Barlow", sans-serif !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: normal !important;
 }
 
 .material-symbols-outlined {
@@ -14,6 +18,12 @@ body {
   'wght' 400,
   'GRAD' 0,
   'opsz' 16
+}
+
+
+:root {
+  --dropdown-background-color: #f1f1f1;
+  --light-gray: #c1c1c1;
 }
 
 .barlow-thin {

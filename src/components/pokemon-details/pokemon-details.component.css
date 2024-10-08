@@ -1,0 +1,15 @@
+.details-wrapper {
+    display: flex;
+    align-items: center;
+    width: 350px;
+    border: #f1f1f1 1px solid;
+}
+
+.detail {
+    display: flex;
+    flex-direction: column;
+}
+
+.weight-text {
+
+}

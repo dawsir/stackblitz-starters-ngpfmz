@@ -32,7 +32,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
                     (blur)="hideDropdown()"
                     (input)="onSearch($event)"
                     placeholder="Choose your favourite..."
-                    class="dropdown-input"
+                    class="input"
                 />
                 @if (searchTerm) {
                     <button class="clear-button" (click)="clearInput()">
@@ -43,12 +43,13 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
                     <span class="material-symbols-outlined icon-blue">search</span>
                 } @else {
                     <span class="material-symbols-outlined">stat_minus_1</span>
-                } 
+                }
             </div>
             @if (showDropdown()) {
                 <ul class="dropdown-list" (mousedown)="onDropdownClick($event)" (scroll)="onScroll($event)">
                     @for (item of filteredItems(); track item[key()]) {
-                        <li class="dropdown-item" (click)="selectItem(item)" [ngClass]="{selected: item[key()] === searchTerm}">
+                        <li class="dropdown-item" (click)="selectItem(item)"
+                            [ngClass]="{selected: item[key()] === searchTerm}">
                             {{ item[key()] }}
                         </li>
                     }

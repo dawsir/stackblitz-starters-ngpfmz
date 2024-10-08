@@ -6,8 +6,8 @@ import { Observable } from 'rxjs';
 export interface PokemonResponse { 
   count: number;
   next: string;
+  results: PokemonBasic[]
   previous?: string;
-  results: PokemonBasic[] 
 }
 
 export interface PokemonBasic { 

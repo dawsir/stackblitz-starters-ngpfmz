@@ -41,7 +41,7 @@ import { BoldMatchingTextDirective } from '../../directives/bold-matching-text.d
                     (input)="onSearch()"
                     placeholder="Choose your favourite..."
                 />
-                @if (searchTerm) {
+                @if (searchTerm()) {
                     <button class="clear-button" (click)="clearInput($event)">
                         <span class="material-symbols-outlined">close</span>
                     </button>
@@ -49,7 +49,7 @@ import { BoldMatchingTextDirective } from '../../directives/bold-matching-text.d
                 @if (showDropdown()) {
                     <span
                         class="material-symbols-outlined">
-                    {{ searchTerm ? 'search' : 'stat_1' }}
+                    {{ searchTerm() ? 'search' : 'stat_1' }}
                 </span>
                 } @else {
                     <span class="material-symbols-outlined rotated-element">stat_1</span>
@@ -63,11 +63,11 @@ import { BoldMatchingTextDirective } from '../../directives/bold-matching-text.d
                     @for (item of filteredItems(); track item[id()]) {
                         <li
                             appBoldMatchingText
-                            [searchTerm]="searchTerm"
+                            [searchTerm]="searchTerm()"
                             [text]=" item[key()] "
                             class="dropdown-item"
                             (click)="selectItem(item)"
-                            [ngClass]="{ selected: searchTerm === item[key()]}">
+                            [ngClass]="{ selected: searchTerm() === item[key()]}">
                         </li>
                     }
                 </ul>
@@ -84,21 +84,22 @@ export class DropdownComponent<T extends Record<string, any>> {
     public id: InputSignal<keyof T> = input<keyof T>('name');
     public key: InputSignal<keyof T> = input<keyof T>('name');
 
+
     @Output() selectedItem = new EventEmitter<T | null>();
     @Output() scrollEnd = new EventEmitter<boolean>();
 
     filteredItems: WritableSignal<T[]> = signal<T[]>([]);
     showDropdown: WritableSignal<boolean> = signal<boolean>(false);
-    private readonly destroyRef = inject(DestroyRef);
+    searchTerm: WritableSignal<string> = signal('');
 
-    searchTerm: string = '';
+    private readonly destroyRef = inject(DestroyRef);
 
     constructor() {
         toObservable(this.items).pipe(takeUntilDestroyed(this.destroyRef), tap(items => {
             if (items.length) {
                 this.filteredItems.set(
                     items?.filter(item =>
-                        (item[this.key()] as string).toLowerCase().includes(this.searchTerm.toLowerCase()),
+                        (item[this.key()] as string).toLowerCase().includes(this.searchTerm().toLowerCase()),
                     ),
                 );
             }
@@ -108,7 +109,7 @@ export class DropdownComponent<T extends Record<string, any>> {
     onSearch() {
         this.filteredItems.set(
             this.items().filter(item =>
-                (item[this.key()] as string).toLowerCase().includes(this.searchTerm.toLowerCase()),
+                (item[this.key()] as string).toLowerCase().includes(this.searchTerm().toLowerCase()),
             ),
         );
     }
@@ -116,7 +117,7 @@ export class DropdownComponent<T extends Record<string, any>> {
     protected selectItem(item: T) {
         if (item) {
             this.selectedItem.emit(item);
-            this.searchTerm = item[this.key()] as string;
+            this.searchTerm.set(item[this.key()] as string);
             this.showDropdown.set(false);
             this.filteredItems.set(this.items());
         }
@@ -134,7 +135,7 @@ export class DropdownComponent<T extends Record<string, any>> {
     protected clearInput(event: Event) {
         event.preventDefault();
         event.stopPropagation();
-        this.searchTerm = '';
+        this.searchTerm.set('');
         this.filteredItems.set(this.items());
         this.selectedItem.emit(null);
         this.focus();

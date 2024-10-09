@@ -64,7 +64,7 @@ describe('DropdownComponent', () => {
     });
 
     it('should display filtered items based on search term', () => {
-        component.searchTerm = 'Pika';
+        component.searchTerm.set('Pika');
         component.onSearch();
         component.focus();
         fixture.detectChanges();
@@ -77,7 +77,7 @@ describe('DropdownComponent', () => {
     it('should emit the selected item when an item is clicked', () => {
         spyOn(component.selectedItem, 'emit');
 
-        component.searchTerm = 'Pikachu';
+        component.searchTerm.set('Pikachu');
         component.onSearch();
         component.focus();
         fixture.detectChanges();
@@ -92,14 +92,14 @@ describe('DropdownComponent', () => {
     it('should clear the input and emit null when the clear button is clicked', () => {
         spyOn(component.selectedItem, 'emit');
 
-        component.searchTerm = 'Pikachu';
+        component.searchTerm.set('Pikachu');
         component.onSearch();
         fixture.detectChanges();
         const clearButton = fixture.debugElement.query(By.css('.clear-button'));
         clearButton.nativeElement.click();
         fixture.detectChanges();
 
-        expect(component.searchTerm).toBe('');
+        expect(component.searchTerm()).toBe('');
         expect(component.selectedItem.emit).toHaveBeenCalledWith(null);
     });
 

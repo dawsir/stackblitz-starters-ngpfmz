@@ -38,7 +38,7 @@ import { BoldMatchingTextDirective } from '../../directives/bold-matching-text.d
                     [(ngModel)]="searchTerm"
                     (click)="showDropdown.set(true)"
                     (blur)="hideDropdown()"
-                    (input)="onSearch($event)"
+                    (input)="onSearch()"
                     placeholder="Choose your favourite..."
                 />
                 @if (searchTerm) {
@@ -105,8 +105,7 @@ export class DropdownComponent<T extends Record<string, any>> {
         })).subscribe();
     }
 
-    onSearch(event: Event) {
-        this.searchTerm = (event.target as HTMLInputElement).value;
+    onSearch() {
         this.filteredItems.set(
             this.items().filter(item =>
                 (item[this.key()] as string).toLowerCase().includes(this.searchTerm.toLowerCase()),
@@ -147,7 +146,7 @@ export class DropdownComponent<T extends Record<string, any>> {
         }
     }
 
-    protected focus() {
+    focus() {
         this.showDropdown.set(true);
         this.input.nativeElement.focus();
     }

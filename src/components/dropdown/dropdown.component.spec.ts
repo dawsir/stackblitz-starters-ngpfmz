@@ -54,6 +54,7 @@ describe('DropdownComponent', () => {
         componentRef.setInput('items', mockItems2)
         componentRef.setInput('id', 'ld');
         componentRef.setInput('key', 'pk');
+
         component.focus();
         fixture.detectChanges();
 
@@ -75,6 +76,7 @@ describe('DropdownComponent', () => {
 
     it('should emit the selected item when an item is clicked', () => {
         spyOn(component.selectedItem, 'emit');
+
         component.searchTerm = 'Pikachu';
         component.onSearch();
         component.focus();
@@ -107,7 +109,6 @@ describe('DropdownComponent', () => {
         fixture.detectChanges();
         expect(component.showDropdown()).toBeTrue();
 
-
         inputElement.triggerEventHandler('blur', null);
         fixture.detectChanges();
         expect(component.showDropdown()).toBeFalse();
@@ -115,7 +116,6 @@ describe('DropdownComponent', () => {
 
     it('should emit scrollEnd when scrolled to the bottom of the dropdown list', () => {
         spyOn(component.scrollEnd, 'emit');
-
 
         const scrollEvent = { target: { offsetHeight: 100, scrollTop: 100, scrollHeight: 200 } };
         component.onScroll(scrollEvent);

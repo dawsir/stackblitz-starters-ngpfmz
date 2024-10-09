@@ -79,8 +79,8 @@ export class DropdownComponent<T extends Record<string, any>> {
     @Output() selectedItem = new EventEmitter<T | null>();
     @Output() scrollEnd = new EventEmitter<boolean>();
 
-    protected id: InputSignal<keyof T> = input<keyof T>('name');
-    protected key: InputSignal<keyof T> = input<keyof T>('name');
+    public id: InputSignal<keyof T> = input<keyof T>('name');
+    public key: InputSignal<keyof T> = input<keyof T>('name');
 
     filteredItems: WritableSignal<T[]> = signal<T[]>([]);
     showDropdown: WritableSignal<boolean> = signal<boolean>(false);
@@ -92,7 +92,7 @@ export class DropdownComponent<T extends Record<string, any>> {
             if (this.items().length) {
                 this.filteredItems.set(
                     this.items()?.filter(item =>
-                        (item[this.id()] as string).toLowerCase().includes(this.searchTerm.toLowerCase()),
+                        (item[this.key()] as string).toLowerCase().includes(this.searchTerm.toLowerCase()),
                     ),
                 );
             }
@@ -103,7 +103,7 @@ export class DropdownComponent<T extends Record<string, any>> {
         this.searchTerm = (event.target as HTMLInputElement).value;
         this.filteredItems.set(
             this.items().filter(item =>
-                (item[this.id()] as string).toLowerCase().includes(this.searchTerm.toLowerCase()),
+                (item[this.key()] as string).toLowerCase().includes(this.searchTerm.toLowerCase()),
             ),
         );
     }

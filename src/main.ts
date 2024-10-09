@@ -5,7 +5,7 @@ import { bootstrapApplication } from '@angular/platform-browser';
 import { map } from 'rxjs';
 import { DropdownComponent } from './components/dropdown/dropdown.component';
 import { PokemonTeaserComponent } from './components/pokemon-teaser/pokemon-teaser.component';
-import { PokemonBasic, PokemonDataResponse } from './model/models';
+import { PokemonBasic, PokemonDataResponse, PokemonTeaser } from './model/models';
 import { PokemonService } from './services/pokemon.service';
 
 @Component({
@@ -29,7 +29,7 @@ import { PokemonService } from './services/pokemon.service';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class App implements OnInit {
-    protected pokemon = signal<any>(null);
+    protected pokemon = signal<PokemonTeaser>(null as unknown as PokemonTeaser);
     protected dropdownItems = signal<PokemonBasic[]>([]);
 
     private nextUrl = signal<string>('');
@@ -46,7 +46,7 @@ export class App implements OnInit {
         });
     }
 
-    protected selectedItem(item: PokemonBasic) {
+    protected selectedItem(item: PokemonBasic | null) {
         if (item) {
             this.service.getPokemon(item.url).pipe(map(({ sprites, weight }) => ({
                 name: item.name,
@@ -56,7 +56,7 @@ export class App implements OnInit {
                 this.pokemon.set(pokemon);
             });
         } else {
-            this.pokemon.set(null);
+            this.pokemon.set(null as unknown as PokemonTeaser);
         }
     }
 

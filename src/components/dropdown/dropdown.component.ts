@@ -2,12 +2,15 @@ import { AsyncPipe, NgClass } from '@angular/common';
 import {
     ChangeDetectionStrategy,
     Component,
-    effect, ElementRef,
+    effect,
+    ElementRef,
     EventEmitter,
     input,
     Input,
     InputSignal,
-    Output, signal, ViewChild,
+    Output,
+    signal,
+    ViewChild,
     WritableSignal,
 } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -40,20 +43,24 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
                     </button>
                 }
                 @if (showDropdown()) {
-                    @if (searchTerm) {
-                        <span class="material-symbols-outlined icon-blue">search</span>
-                    } @else {
-                        <span class="material-symbols-outlined rotated-element">stat_minus_1</span>
-                    }
+                    <span
+                        class="material-symbols-outlined">
+                    {{ searchTerm ? 'search' : 'stat_1' }}
+                </span>
                 } @else {
-                    <span class="material-symbols-outlined">stat_minus_1</span>
+                    <span class="material-symbols-outlined rotated-element">stat_1</span>
                 }
             </div>
             @if (showDropdown()) {
-                <ul class="dropdown-list" (mousedown)="onDropdownClick($event)" (scroll)="onScroll($event)">
+                <ul
+                    class="dropdown-list"
+                    (mousedown)="onDropdownClick($event)"
+                    (scroll)="onScroll($event)">
                     @for (item of filteredItems(); track item[id()]) {
-                        <li class="dropdown-item" (click)="selectItem(item)"
-                            [ngClass]="{selected: item[id()] === searchTerm}">
+                        <li
+                            class="dropdown-item"
+                            (click)="selectItem(item)"
+                            [ngClass]="{ selected: item[id()] === searchTerm }">
                             {{ item[key()] }}
                         </li>
                     }
@@ -64,17 +71,18 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     styleUrl: './dropdown.component.css',
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DropdownComponent {
+export class DropdownComponent<T extends Record<string, any>> {
     @ViewChild('input') input!: ElementRef;
-    @Input() items!: WritableSignal<any[]>;
 
-    @Output() selectedItem = new EventEmitter<any>();
+    @Input() items!: WritableSignal<T[]>;
+
+    @Output() selectedItem = new EventEmitter<T | null>();
     @Output() scrollEnd = new EventEmitter<boolean>();
 
-    protected id: InputSignal<string> = input<string>('name');
-    protected key: InputSignal<string> = input<string>('name');
+    protected id: InputSignal<keyof T> = input<keyof T>('name');
+    protected key: InputSignal<keyof T> = input<keyof T>('name');
 
-    filteredItems: WritableSignal<any[]> = signal<any[]>([]);
+    filteredItems: WritableSignal<T[]> = signal<T[]>([]);
     showDropdown: WritableSignal<boolean> = signal<boolean>(false);
 
     protected searchTerm: string = '';
@@ -82,26 +90,31 @@ export class DropdownComponent {
     constructor() {
         effect(() => {
             if (this.items().length) {
-                this.filteredItems.set(this.items()?.filter(item => (item[this.id()]).toLowerCase().includes(this.searchTerm.toLowerCase())));
+                this.filteredItems.set(
+                    this.items()?.filter(item =>
+                        (item[this.id()] as string).toLowerCase().includes(this.searchTerm.toLowerCase()),
+                    ),
+                );
             }
         }, { allowSignalWrites: true });
     }
 
     protected onSearch(event: Event) {
-        const inputValue = (event.target as HTMLInputElement).value;
-        this.searchTerm = inputValue;
-        this.filteredItems.set(this.items().filter(item =>
-            (item[this.id()]).toLowerCase().includes(this.searchTerm.toLowerCase())));
+        this.searchTerm = (event.target as HTMLInputElement).value;
+        this.filteredItems.set(
+            this.items().filter(item =>
+                (item[this.id()] as string).toLowerCase().includes(this.searchTerm.toLowerCase()),
+            ),
+        );
     }
 
-    protected selectItem(item: any) {
+    protected selectItem(item: T) {
         if (item) {
             this.selectedItem.emit(item);
-            this.searchTerm = item[this.key()];
+            this.searchTerm = item[this.key()] as string;
             this.showDropdown.set(false);
             this.filteredItems.set(this.items());
         }
-
     }
 
     protected hideDropdown() {
@@ -113,7 +126,6 @@ export class DropdownComponent {
         event.stopPropagation();
     }
 
-    // Clear the input and hide dropdown
     protected clearInput(event: Event) {
         event.preventDefault();
         event.stopPropagation();

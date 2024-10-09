@@ -2,18 +2,21 @@ import { AsyncPipe, NgClass } from '@angular/common';
 import {
     ChangeDetectionStrategy,
     Component,
-    effect,
+    DestroyRef,
     ElementRef,
     EventEmitter,
+    inject,
     input,
-    Input,
     InputSignal,
     Output,
     signal,
     ViewChild,
     WritableSignal,
 } from '@angular/core';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { tap } from 'rxjs';
+import { BoldMatchingTextDirective } from '../../directives/bold-matching-text.directive';
 
 @Component({
     selector: 'app-dropdown',
@@ -23,6 +26,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
         FormsModule,
         AsyncPipe,
         NgClass,
+        BoldMatchingTextDirective,
     ],
     template: `
         <div class="dropdown-wrapper">
@@ -58,10 +62,12 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
                     (scroll)="onScroll($event)">
                     @for (item of filteredItems(); track item[id()]) {
                         <li
+                            appBoldMatchingText
+                            [searchTerm]="searchTerm"
+                            [text]=" item[key()] "
                             class="dropdown-item"
                             (click)="selectItem(item)"
                             [ngClass]="{ selected: searchTerm.match(RegExp(item[key()], 'i'))}">
-                            {{ item[key()] }}
                         </li>
                     }
                 </ul>
@@ -74,32 +80,32 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 export class DropdownComponent<T extends Record<string, any>> {
     @ViewChild('input') input!: ElementRef;
 
-    @Input() items!: WritableSignal<T[]>;
+    public items: InputSignal<T[]> = input<T[]>([]);
+    public id: InputSignal<keyof T> = input<keyof T>('name');
+    public key: InputSignal<keyof T> = input<keyof T>('name');
 
     @Output() selectedItem = new EventEmitter<T | null>();
     @Output() scrollEnd = new EventEmitter<boolean>();
 
-    public id: InputSignal<keyof T> = input<keyof T>('name');
-    public key: InputSignal<keyof T> = input<keyof T>('name');
-
     filteredItems: WritableSignal<T[]> = signal<T[]>([]);
     showDropdown: WritableSignal<boolean> = signal<boolean>(false);
+    private readonly destroyRef = inject(DestroyRef);
 
-    protected searchTerm: string = '';
+    searchTerm: string = '';
 
     constructor() {
-        effect(() => {
-            if (this.items().length) {
+        toObservable(this.items).pipe(takeUntilDestroyed(this.destroyRef), tap(items => {
+            if (items.length) {
                 this.filteredItems.set(
-                    this.items()?.filter(item =>
+                    items?.filter(item =>
                         (item[this.key()] as string).toLowerCase().includes(this.searchTerm.toLowerCase()),
                     ),
                 );
             }
-        }, { allowSignalWrites: true });
+        })).subscribe();
     }
 
-    protected onSearch(event: Event) {
+    onSearch(event: Event) {
         this.searchTerm = (event.target as HTMLInputElement).value;
         this.filteredItems.set(
             this.items().filter(item =>
@@ -135,7 +141,7 @@ export class DropdownComponent<T extends Record<string, any>> {
         this.focus();
     }
 
-    protected onScroll(event: any) {
+    onScroll(event: any) {
         if (event.target.offsetHeight + event.target.scrollTop >= event.target.scrollHeight) {
             this.scrollEnd.emit();
         }

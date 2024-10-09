@@ -75,7 +75,6 @@ input:focus-visible::placeholder {
 
 .selected {
     background-color: aliceblue;
-    font-weight: bold;
 }
 
 .selected:hover {

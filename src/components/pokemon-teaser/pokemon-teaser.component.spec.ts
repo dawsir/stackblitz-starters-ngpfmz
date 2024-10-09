@@ -3,7 +3,7 @@ import { PokemonTeaserComponent } from './pokemon-teaser.component';
 import { signal } from '@angular/core';
 import { PokemonTeaser } from '../../model/models';
 
-describe('PokemonDetailsComponent', () => {
+describe('PokemonTeaserComponent', () => {
     let component: PokemonTeaserComponent;
     let fixture: ComponentFixture<PokemonTeaserComponent>;
 
@@ -15,13 +15,13 @@ describe('PokemonDetailsComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [PokemonTeaserComponent],
+            imports: [PokemonTeaserComponent],
         }).compileComponents();
 
         fixture = TestBed.createComponent(PokemonTeaserComponent);
         component = fixture.componentInstance;
-        component.pokemon = signal(mockPokemon); // Initialize with mock data
-        fixture.detectChanges(); // Trigger change detection
+        component.pokemon = signal(mockPokemon);
+        fixture.detectChanges();
     });
 
     it('should create the component', () => {
@@ -39,10 +39,10 @@ describe('PokemonDetailsComponent', () => {
     });
 
     it('should not display details if pokemon is not provided', () => {
-        component.pokemon = signal({} as PokemonTeaser); // Set pokemon to null
-        fixture.detectChanges(); // Trigger change detection
+        component.pokemon = signal(null as unknown as PokemonTeaser);
+        fixture.detectChanges();
 
         const detailsWrapper = fixture.nativeElement.querySelector('.details-wrapper');
-        expect(detailsWrapper).toBeNull(); // Ensure details are not rendered
+        expect(detailsWrapper).toBeNull();
     });
 });

@@ -19,7 +19,7 @@ import { PokemonService } from './services/pokemon.service';
     template: `
         <div class="wrapper">
             <h2 class="no-margin-bottom">PokeSelect</h2>
-            <app-dropdown [items]="dropdownItems" (selectedItem)="selectedItem($event)"
+            <app-dropdown [items]="dropdownItems()" (selectedItem)="selectedItem($event)"
                           (scrollEnd)="fetchMoreData()"></app-dropdown>
             @if (pokemon()) {
                 <app-pokemon-teaser class="" [pokemon]="pokemon"></app-pokemon-teaser>

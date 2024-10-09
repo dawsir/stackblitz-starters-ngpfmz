@@ -32,9 +32,8 @@ export class App implements OnInit {
     protected pokemon = signal<PokemonTeaser>(null as unknown as PokemonTeaser);
     protected dropdownItems = signal<PokemonBasic[]>([]);
 
-    private nextUrl = signal<string>('');
-    private service: PokemonService = inject(PokemonService);
-
+    private readonly nextUrl = signal<string>('');
+    private readonly service: PokemonService = inject(PokemonService);
 
     ngOnInit(): void {
         this.service.getPokemons().subscribe((value: PokemonDataResponse) => {

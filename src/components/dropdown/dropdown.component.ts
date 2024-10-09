@@ -60,7 +60,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
                         <li
                             class="dropdown-item"
                             (click)="selectItem(item)"
-                            [ngClass]="{ selected: item[id()] === searchTerm }">
+                            [ngClass]="{ selected: searchTerm.match(RegExp(item[key()], 'i'))}">
                             {{ item[key()] }}
                         </li>
                     }
@@ -145,4 +145,6 @@ export class DropdownComponent<T extends Record<string, any>> {
         this.showDropdown.set(true);
         this.input.nativeElement.focus();
     }
+
+    protected readonly RegExp = RegExp;
 }

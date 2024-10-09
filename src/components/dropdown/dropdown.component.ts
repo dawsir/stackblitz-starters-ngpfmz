@@ -67,7 +67,7 @@ import { BoldMatchingTextDirective } from '../../directives/bold-matching-text.d
                             [text]=" item[key()] "
                             class="dropdown-item"
                             (click)="selectItem(item)"
-                            [ngClass]="{ selected: searchTerm.match(RegExp(item[key()], 'i'))}">
+                            [ngClass]="{ selected: searchTerm === item[key()]}">
                         </li>
                     }
                 </ul>

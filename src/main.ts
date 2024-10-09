@@ -22,7 +22,7 @@ import { PokemonService } from './services/pokemon.service';
             <app-dropdown [items]="dropdownItems()" (selectedItem)="selectedItem($event)"
                           (scrollEnd)="fetchMoreData()"></app-dropdown>
             @if (pokemon()) {
-                <app-pokemon-teaser class="" [pokemon]="pokemon"></app-pokemon-teaser>
+                <app-pokemon-teaser [pokemon]="pokemon"></app-pokemon-teaser>
             }
         </div>
     `,

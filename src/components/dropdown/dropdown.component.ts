@@ -84,7 +84,6 @@ export class DropdownComponent<T extends Record<string, any>> {
     public id: InputSignal<keyof T> = input<keyof T>('name');
     public key: InputSignal<keyof T> = input<keyof T>('name');
 
-
     @Output() selectedItem = new EventEmitter<T | null>();
     @Output() scrollEnd = new EventEmitter<boolean>();
 
@@ -151,6 +150,4 @@ export class DropdownComponent<T extends Record<string, any>> {
         this.showDropdown.set(true);
         this.input.nativeElement.focus();
     }
-
-    protected readonly RegExp = RegExp;
 }

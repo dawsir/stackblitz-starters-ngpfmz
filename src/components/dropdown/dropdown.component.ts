@@ -97,9 +97,10 @@ export class DropdownComponent<T extends Record<string, any>> {
         toObservable(this.items).pipe(takeUntilDestroyed(this.destroyRef), tap(items => {
             if (items.length) {
                 this.filteredItems.set(
-                    items?.filter(item =>
-                        (item[this.key()] as string).toLowerCase().includes(this.searchTerm().toLowerCase()),
-                    ),
+                    items.some(item => item[this.key()] === this.searchTerm()) ?
+                        items : items?.filter(item =>
+                            item[this.key()].toLowerCase().includes(this.searchTerm().toLowerCase()),
+                        ),
                 );
             }
         })).subscribe();
